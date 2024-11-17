@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invitation</title>
+</head>
+<body>
+<h1>Send Invitation</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+    <button type="submit">Send Invitation</button>
+</form>
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}
+</body>
+</html>

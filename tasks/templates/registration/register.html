@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
 <h1>Register</h1>
 <form method="post">
     {% csrf_token %}
@@ -12,5 +10,4 @@
     <button type="submit">Register</button>
 </form>
 <a href="{% url 'login' %}">Already have an account? Login here</a>
-</body>
-</html>
+{% endblock %}

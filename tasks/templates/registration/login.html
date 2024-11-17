@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login page</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
 <h1>Login</h1>
 <form method="post">
     {% csrf_token %}
@@ -13,5 +11,4 @@
 </form>
 <a href="{% provider_login_url 'google' %}">Login with Google</a>
 <a href="{% url 'register' %}">Don't have an account? Register here</a>
-</body>
-</html>
+{% endblock %}

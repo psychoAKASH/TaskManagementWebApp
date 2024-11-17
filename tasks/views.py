@@ -1,17 +1,14 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Task
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Task
 from .forms import TaskForm
-
+from django.core.mail import send_mail
+from django.contrib import messages
+from .models import Task, Invitation
+import uuid
 
 
 @login_required
@@ -67,3 +64,47 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, 'registration/register.html', {'form': form})
+
+
+def is_admin(user):
+    return user.is_staff
+
+
+@user_passes_test(is_admin)
+def send_invitation(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        if not Invitation.objects.filter(email=email).exists():
+            token = uuid.uuid4().hex
+            Invitation.objects.create(email=email, token=token, invited_by=request.user)
+            # Send an email with the invitation link
+            link = f"http://127.0.0.1:8000/register-with-invitation/?token={token}"
+            send_mail(
+                "You're invited!",
+                f"Use this link to register: {link}",
+                "admin@example.com",
+                [email],
+            )
+            messages.success(request, "Invitation sent successfully!")
+        else:
+            messages.error(request, "This email has already been invited.")
+    return render(request, "tasks/send_invitation.html")
+
+
+def register_with_invitation(request):
+    token = request.GET.get("token")
+    invitation = Invitation.objects.filter(token=token, is_used=False).first()
+
+    if not invitation:
+        return render(request, "tasks/invalid_invitation.html")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = User.objects.create_user(username=username, password=password, email=invitation.email)
+        invitation.is_used = True
+        invitation.save()
+        login(request, user)
+        return redirect("/")
+
+    return render(request, "tasks/register_with_invitation.html")
