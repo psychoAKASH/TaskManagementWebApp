@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Delete Task</h1>
-<p>Are you sure you want to delete "{{ object.title }}"?</p>
+<p>Are you sure you want to delete "{{ task.title }}"?</p>
 <form method="post">
     {% csrf_token %}
     <button type="submit">Yes, delete</button>

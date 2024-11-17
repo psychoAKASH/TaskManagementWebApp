@@ -5,7 +5,7 @@
     <title>Task Form</title>
 </head>
 <body>
-<h1>{% if object %}Edit{% else %}Create{% endif %} Task</h1>
+<h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Task</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
