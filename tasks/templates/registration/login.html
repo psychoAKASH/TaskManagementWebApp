@@ -11,6 +11,7 @@
     {{ form.as_p }}
     <button type="submit">Login</button>
 </form>
+<a href="{% provider_login_url 'google' %}">Login with Google</a>
 <a href="{% url 'register' %}">Don't have an account? Register here</a>
 </body>
 </html>
